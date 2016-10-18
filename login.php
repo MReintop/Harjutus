@@ -6,6 +6,7 @@ require("functions.php");
 if(isset($_SESSION["userID"])){
 	
 	header("Location:data.php");
+	exit();
 }
 
 
@@ -16,6 +17,7 @@ if(isset($_SESSION["userID"])){
 	$registerEmailError = "";
 	$registerPasswordError ="";
 	$signupEmail = "";	
+	$registerEmail = "";	
 	
 	
 
@@ -65,6 +67,11 @@ if(isset($_SESSION["userID"])){
 		if( empty($_POST["registerEmail"])) {
 
 			$registerEmailError = "e-mail on kohustuslik";
+         }else{
+			
+			//email olemas
+			$registerEmail=$_POST["registerEmail"];
+
 
 
 
@@ -110,7 +117,7 @@ if( isset($_POST["registerPassword"] )){
 		
 		echo "password hashed: ".$password."<br>";  
 		
-		signUp($registerEmail,$password);
+		signUp((cleanInput($registerEmail)),(cleanInput($password)));
 		
 		
 		//salvestame andmebaasi
@@ -149,14 +156,14 @@ if( isset($_POST["registerPassword"] )){
 	
 	}
 	
-var_dump($_POST);
+//var_dump($_POST);
 $error="";
 
 if( isset($_POST["signupEmail"]) && isset($_POST["signupPassword"])&&
 			!empty($_POST["signupEmail"]) && !empty($_POST["signupPassword"])
 			){
 				
-				$error = login($_POST["signupEmail"], $_POST["signupPassword"]);
+				$error = login(cleanInput($_POST["signupEmail"]),(cleanInput($_POST["signupPassword"])));
 			}
 	
 ?>
@@ -167,13 +174,15 @@ if( isset($_POST["signupEmail"]) && isset($_POST["signupPassword"])&&
 <head>
 <title>´Logi sisse või loo kasutaja</title>
 </head>
-<body bgcolor="#99FF33">
+<body background="http://www.pixeden.com/media/k2/galleries/165/004-subtle-light-pattern-background-texture-vol5.jpg">
 
-<h2><font face="verdana" color="green">Logi sisse</font></h2>
+<br><br><br><br><br>
+
+<center><h2><font face="verdana" color="green">Logi sisse</font></h2></center>
 
 
 
-	<form method=POST>
+	<center><form method=POST>
 
 
 
@@ -184,27 +193,27 @@ if( isset($_POST["signupEmail"]) && isset($_POST["signupPassword"])&&
 
 		<input name=signupPassword placeholder="parool" type="password"> <?php echo $signupPasswordError; ?>
 
-	<br>
+	<br><br>
 
 		<input type="submit" value="Logi sisse">
 	<br><br>
+	<br><br><br>
 
 
 
-
-	</form>
+	</form></center>
 
 	
-	<h1><font face="verdana" color="green">Loo kasutaja</font></h1>
-	<h2><font face="verdana" color="green">Sisesta e-mail</font></h2>
-
-	<?php echo $registerEmailError;?>
-	<?php echo $registerPasswordError;?>
+	<center><h2><font face="verdana" color="green">Loo kasutaja</font></h2></center>
 	
 
-	<form method=post>
+	<center><?php echo $registerEmailError;?></center>
+	<center><?php echo $registerPasswordError;?></center>
+	
 
-	<input type=text  name=registerEmail  placeholder="Sisesta meiliaadress" > <br><br>
+	<center><form method=post>
+
+	<input type=text  name=registerEmail  placeholder="Sisesta meiliaadress" value="<?=$registerEmail;?>"> <br><br>
 	
 	
 
@@ -216,7 +225,7 @@ if( isset($_POST["signupEmail"]) && isset($_POST["signupPassword"])&&
 
 
 
-	</form>
+	</form></center>
 	
 
 	

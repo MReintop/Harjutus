@@ -72,6 +72,7 @@ require("../../config.php");
 				
 				
 				header("Location: data.php");
+				exit();
 				
 			}else {
 				$error = "vale parool";
@@ -87,7 +88,95 @@ require("../../config.php");
 		return $error;
 		
 	}
+
+
+	function cleanInput($input){
+		
+		$input = trim($input);           
+		$input = htmlspecialchars($input);
+		$input = stripslashes($input);
+		
+	    return $input;
+	}
 	
+		
+	function savePlant ($taim, $intervall) {
+		
+		
+		
+		$database = "if16_mreintop";
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $database);
+		
+		$stmt = $mysqli->prepare(
+		"INSERT INTO lilled (taim, intervall) VALUES (?,?)");
+		
+		echo $mysqli->error;
+		
+		
+		
+		//asendan küsimärgi
+		$stmt->bind_param("ss", $taim,$intervall);
+		
+		if ( $stmt->execute() )  {
+			
+			echo "salvestamine õnnestus";
+			
+		}  else  {
+			
+			echo "ERROR".$stmt->error;
+		}
+		
+		$stmt->close();
+		$mysqli->close();
+	}
+	
+	function getAllPlants () {
+		
+		
+	
+		$database = "if16_mreintop";
+		$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $database);
+		
+		
+		$stmt = $mysqli->prepare("
+		
+		  SELECT id, taim,intervall FROM lilled
+		 
+		");
+		echo $mysqli->error;
+		
+		
+		$stmt -> bind_result ($id, $taim,$intervall) ;
+		$stmt ->execute();
+		
+		//tekitan massiivi
+		
+		$result=array();
+		
+		//Tee seda seni, kuni on rida andmeid. ($stmt->fech)
+		//Mis vastab select lausele.
+		//iga uue rea andme kohta see lause seal sees
+		
+		while($stmt->fetch()){
+			
+			//tekitan objekti
+			
+			$plant = new StdClass();
+			
+		    $plant->id=$id;
+			$plant->taim=$taim;
+			$plant->intervall=$intervall;
+			
+			
+			
+			array_push($result, $plant);
+		}
+		$stmt->close();
+		$mysqli->close();
+		return $result;
+		
+		
+	}
 	
 	
 ?>
